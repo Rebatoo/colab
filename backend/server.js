@@ -17,7 +17,10 @@ mongoose.connect(DB_URL)
 
 // Routes
 const thesisRoutes = require('./routes/thesis');
+const userRoutes = require('./routes/users');
+
 app.use('/api/thesis', thesisRoutes);
+app.use('/api/users', userRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
