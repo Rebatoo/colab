@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thesis Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #1976d2;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .nav-button:hover {
+            background-color: #1565c0;
+        }
+
+        .thesis-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+            color: #333;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            background-color: #1976d2;
+            color: white;
+        }
+
+        .thesis-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .thesis-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .thesis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .thesis-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .thesis-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+        }
+
+        .approve-button {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .reject-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .view-button {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        .thesis-details {
+            margin-bottom: 15px;
+        }
+
+        .thesis-detail {
+            margin-bottom: 8px;
+        }
+
+        .thesis-detail strong {
+            color: #666;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+
+        .status-approved {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-rejected {
+            background-color: #fce4ec;
+            color: #c2185b;
+        }
+
+        .error {
+            color: #f44336;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .success {
+            color: #4caf50;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 100px;
+        }
+
+        .submit-button {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thesis Management</h1>
+        
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-button">View All Theses</a>
+            <a href="submit.html" class="nav-button">Submit Thesis</a>
+            <a href="pending.html" class="nav-button">Pending Theses</a>
+            <a href="user-management.html" class="nav-button">User Management</a>
+        </div>
+
+        <div class="thesis-tabs">
+            <button class="tab-button active" onclick="filterTheses('all')">All Theses</button>
+            <button class="tab-button" onclick="filterTheses('pending')">Pending</button>
+            <button class="tab-button" onclick="filterTheses('approved')">Approved</button>
+            <button class="tab-button" onclick="filterTheses('rejected')">Rejected</button>
+        </div>
+
+        <div class="thesis-list" id="thesisList">
+            <!-- Theses will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Review Thesis</h2>
+                <button class="close-button" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="reviewForm" onsubmit="submitReview(event)">
+                <input type="hidden" id="thesisId">
+                <input type="hidden" id="reviewAction">
+                <div class="form-group">
+                    <label for="reviewComments">Comments</label>
+                    <textarea id="reviewComments" required></textarea>
+                </div>
+                <button type="submit" class="submit-button">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/thesis';
+        let currentFilter = 'all';
+
+        // Load theses
+        async function loadTheses() {
+            try {
+                const response = await fetch(API_URL);
+                const theses = await response.json();
+                displayTheses(theses);
+            } catch (error) {
+                console.error('Error loading theses:', error);
+                showError('Failed to load theses');
+            }
+        }
+
+        // Display theses
+        function displayTheses(theses) {
+            const thesisList = document.getElementById('thesisList');
+            thesisList.innerHTML = '';
+
+            const filteredTheses = currentFilter === 'all' 
+                ? theses 
+                : theses.filter(thesis => thesis.status === currentFilter);
+
+            if (filteredTheses.length === 0) {
+                thesisList.innerHTML = `
+                    <div class="thesis-card" style="text-align: center; padding: 40px;">
+                        <h3>No Theses Found</h3>
+                        <p>There are no theses in this category.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredTheses.forEach(thesis => {
+                const thesisCard = createThesisCard(thesis);
+                thesisList.appendChild(thesisCard);
+            });
+        }
+
+        // Create thesis card
+        function createThesisCard(thesis) {
+            const card = document.createElement('div');
+            card.className = 'thesis-card';
+            
+            const statusClass = `status-${thesis.status}`;
+            
+            let actionButtons = '';
+            if (thesis.status === 'pending') {
+                actionButtons = `
+                    <button class="action-button approve-button" onclick="openReviewModal('${thesis._id}', 'approved')">Approve</button>
+                    <button class="action-button reject-button" onclick="openReviewModal('${thesis._id}', 'rejected')">Reject</button>
+                `;
+            }
+            
+            card.innerHTML = `
+                <div class="thesis-header">
+                    <div class="thesis-title">${thesis.title}</div>
+                    <div class="thesis-actions">
+                        ${actionButtons}
+                        <button class="action-button view-button" onclick="viewThesis('${thesis._id}')">View</button>
+                    </div>
+                </div>
+                <div class="thesis-details">
+                    <div class="thesis-detail"><strong>Author:</strong> ${thesis.author}</div>
+                    <div class="thesis-detail"><strong>Advisor:</strong> ${thesis.advisor}</div>
+                    <div class="thesis-detail"><strong>Department:</strong> ${thesis.department}</div>
+                    <div class="thesis-detail">
+                        <strong>Status:</strong> 
+                        <span class="status-badge ${statusClass}">${thesis.status.toUpperCase()}</span>
+                    </div>
+                    ${thesis.comments ? `<div class="thesis-detail"><strong>Comments:</strong> ${thesis.comments}</div>` : ''}
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Filter theses
+        function filterTheses(status) {
+            currentFilter = status;
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            loadTheses();
+        }
+
+        // Open review modal
+        function openReviewModal(thesisId, action) {
+            const modal = document.getElementById('reviewModal');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            modalTitle.textContent = action === 'approved' ? 'Approve Thesis' : 'Reject Thesis';
+            document.getElementById('thesisId').value = thesisId;
+            document.getElementById('reviewAction').value = action;
+            document.getElementById('reviewComments').value = '';
+            
+            modal.style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('reviewModal').style.display = 'none';
+        }
+
+        // Submit review
+        async function submitReview(event) {
+            event.preventDefault();
+            
+            const thesisId = document.getElementById('thesisId').value;
+            const action = document.getElementById('reviewAction').value;
+            const comments = document.getElementById('reviewComments').value;
+
+            try {
+                const response = await fetch(`${API_URL}/${thesisId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: action,
+                        comments: comments
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update thesis');
+                }
+
+                closeModal();
+                loadTheses();
+                showSuccess(`Thesis ${action} successfully`);
+            } catch (error) {
+                console.error('Error updating thesis:', error);
+                showError('Failed to update thesis');
+            }
+        }
+
+        // View thesis details
+        function viewThesis(thesisId) {
+            window.location.href = `thesis-details.html?id=${thesisId}`;
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            document.querySelector('.container').insertBefore(errorDiv, document.querySelector('.thesis-tabs'));
+            setTimeout(() => errorDiv.remove(), 3000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            document.querySelector('.container').insertBefore(successDiv, document.querySelector('.thesis-tabs'));
+            setTimeout(() => successDiv.remove(), 3000);
+        }
+
+        // Load theses when page loads
+        document.addEventListener('DOMContentLoaded', loadTheses);
+    </script>
+</body>
+</html> 
