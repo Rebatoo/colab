@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Thesis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #1976d2;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .nav-button:hover {
+            background-color: #1565c0;
+        }
+
+        .submission-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .member-inputs {
+            margin-top: 10px;
+        }
+
+        .member-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .member-input input {
+            flex: 1;
+        }
+
+        .add-member {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .remove-member {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-button {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1em;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-button:hover {
+            background-color: #1565c0;
+        }
+
+        .error {
+            text-align: center;
+            padding: 20px;
+            color: #d32f2f;
+            background-color: #ffebee;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .success {
+            text-align: center;
+            padding: 20px;
+            color: #2e7d32;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Submit Thesis</h1>
+        
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-button">View Theses</a>
+            <a href="submit.html" class="nav-button">Submit Thesis</a>
+        </div>
+
+        <div class="submission-form">
+            <form id="thesisForm" onsubmit="submitThesis(event)">
+                <div class="form-group">
+                    <label for="submitterEmail">Submitter Email</label>
+                    <input type="email" id="submitterEmail" name="submitterEmail" required 
+                           placeholder="Enter your email address">
+                    <small style="color: #666; display: block; margin-top: 5px;">This email will be used to track your submission</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="objective">Objective</label>
+                    <textarea id="objective" name="objective" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="abstract">Abstract</label>
+                    <textarea id="abstract" name="abstract" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Members</label>
+                    <div id="memberInputs" class="member-inputs">
+                        <div class="member-input">
+                            <input type="email" name="members[]" placeholder="Member Email" required>
+                            <button type="button" class="remove-member" onclick="removeMember(this)">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-member" onclick="addMember()">Add Member</button>
+                </div>
+
+                <div class="form-group">
+                    <label for="adviserEmail">Adviser Email</label>
+                    <input type="email" id="adviserEmail" name="adviserEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="docsLink">Document Link</label>
+                    <input type="url" id="docsLink" name="docsLink" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select Category</option>
+                        <option value="AI">AI</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Mobile Development">Mobile Development</option>
+                        <option value="Networking">Networking</option>
+                        <option value="Database">Database</option>
+                        <option value="Security">Security</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="keywords">Keywords (comma-separated)</label>
+                    <input type="text" id="keywords" name="keywords" required>
+                </div>
+
+                <button type="submit" class="submit-button">Submit Thesis</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/thesis';
+
+        function addMember() {
+            const memberInputs = document.getElementById('memberInputs');
+            const newMember = document.createElement('div');
+            newMember.className = 'member-input';
+            newMember.innerHTML = `
+                <input type="email" name="members[]" placeholder="Member Email" required>
+                <button type="button" class="remove-member" onclick="removeMember(this)">Remove</button>
+            `;
+            memberInputs.appendChild(newMember);
+        }
+
+        function removeMember(button) {
+            const memberInputs = document.getElementById('memberInputs');
+            if (memberInputs.children.length > 1) {
+                button.parentElement.remove();
+            }
+        }
+
+        async function submitThesis(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            const thesisData = {
+                submitterEmail: formData.get('submitterEmail'),
+                title: formData.get('title'),
+                objective: formData.get('objective'),
+                abstract: formData.get('abstract'),
+                members: Array.from(formData.getAll('members[]')).map(email => ({ email })),
+                adviserEmail: formData.get('adviserEmail'),
+                docsLink: formData.get('docsLink'),
+                category: formData.get('category'),
+                keywords: formData.get('keywords').split(',').map(k => k.trim()),
+                status: 'pending'
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(thesisData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to submit thesis');
+                }
+
+                const result = await response.json();
+                form.reset();
+                
+                // Show success message
+                const successMessage = document.createElement('div');
+                successMessage.className = 'success';
+                successMessage.textContent = 'Thesis submitted successfully! Redirecting to thesis list...';
+                form.insertBefore(successMessage, form.firstChild);
+                
+                // Redirect to index page after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            } catch (error) {
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'error';
+                errorMessage.textContent = `Error submitting thesis: ${error.message}`;
+                form.insertBefore(errorMessage, form.firstChild);
+                
+                // Remove error message after 3 seconds
+                setTimeout(() => {
+                    errorMessage.remove();
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html> 
