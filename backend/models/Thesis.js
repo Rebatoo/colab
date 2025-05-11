@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
 const thesisSchema = new mongoose.Schema({
+  submitterEmail: {
+    type: String,
+    required: true
+  },
   title: {
     type: String,
     required: true
   },
-  author: {
+  objective: {
     type: String,
     required: true
   },
@@ -13,15 +17,34 @@ const thesisSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  year: {
-    type: Number,
-    required: true
-  },
-  department: {
+  members: [{
+    email: {
+      type: String,
+      required: true
+    }
+  }],
+  adviserEmail: {
     type: String,
     required: true
   },
+  docsLink: {
+    type: String,
+    required: true
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ['AI', 'Web Development', 'Mobile Development', 'Networking', 'Database', 'Security']
+  },
   keywords: [{
+    type: String
+  }],
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending'
+  },
+  feedback: [{
     type: String
   }],
   createdAt: {

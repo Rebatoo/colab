@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Theses</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .nav-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #1976d2;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .nav-button:hover {
+            background-color: #1565c0;
+        }
+
+        .thesis-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .thesis-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .thesis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .thesis-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .thesis-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-button {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+        }
+
+        .edit-button {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .approve-button {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .thesis-details {
+            margin-bottom: 15px;
+        }
+
+        .thesis-detail {
+            margin-bottom: 8px;
+        }
+
+        .thesis-detail strong {
+            color: #666;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .submit-button {
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .error {
+            color: #f44336;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .success {
+            color: #4caf50;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pending Theses</h1>
+        
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-button">View All Theses</a>
+            <a href="submit.html" class="nav-button">Submit Thesis</a>
+            <a href="pending.html" class="nav-button">Pending Theses</a>
+        </div>
+
+        <div class="thesis-list" id="thesisList">
+            <!-- Theses will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Thesis</h2>
+                <button class="close-button" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="editForm" onsubmit="updateThesis(event)">
+                <input type="hidden" id="editThesisId">
+                <div class="form-group">
+                    <label for="editTitle">Title</label>
+                    <input type="text" id="editTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="editObjective">Objective</label>
+                    <textarea id="editObjective" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editAbstract">Abstract</label>
+                    <textarea id="editAbstract" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">Category</label>
+                    <select id="editCategory" required>
+                        <option value="AI">AI</option>
+                        <option value="Web Development">Web Development</option>
+                        <option value="Mobile Development">Mobile Development</option>
+                        <option value="Networking">Networking</option>
+                        <option value="Database">Database</option>
+                        <option value="Security">Security</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editKeywords">Keywords (comma-separated)</label>
+                    <input type="text" id="editKeywords" required>
+                </div>
+                <button type="submit" class="submit-button">Update Thesis</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api/thesis';
+
+        // Load pending theses
+        async function loadPendingTheses() {
+            try {
+                const response = await fetch(API_URL);
+                const theses = await response.json();
+                const pendingTheses = theses.filter(thesis => thesis.status === 'pending');
+                
+                const thesisList = document.getElementById('thesisList');
+                thesisList.innerHTML = '';
+
+                if (pendingTheses.length === 0) {
+                    thesisList.innerHTML = `
+                        <div class="thesis-card" style="text-align: center; padding: 40px;">
+                            <h3>No Pending Theses</h3>
+                            <p>There are currently no theses pending review.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                pendingTheses.forEach(thesis => {
+                    const thesisCard = createThesisCard(thesis);
+                    thesisList.appendChild(thesisCard);
+                });
+            } catch (error) {
+                console.error('Error loading theses:', error);
+                const thesisList = document.getElementById('thesisList');
+                thesisList.innerHTML = `
+                    <div class="thesis-card" style="text-align: center; padding: 40px; color: #f44336;">
+                        <h3>Error Loading Theses</h3>
+                        <p>Failed to load pending theses. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Create thesis card
+        function createThesisCard(thesis) {
+            const card = document.createElement('div');
+            card.className = 'thesis-card';
+            
+            card.innerHTML = `
+                <div class="thesis-header">
+                    <div class="thesis-title">${thesis.title}</div>
+                    <div class="thesis-actions">
+                        <button class="action-button edit-button" onclick="openEditModal('${thesis._id}')">Edit</button>
+                        <button class="action-button delete-button" onclick="deleteThesis('${thesis._id}')">Delete</button>
+                        <button class="action-button approve-button" onclick="updateStatus('${thesis._id}', 'approved')">Approve</button>
+                    </div>
+                </div>
+                <div class="thesis-details">
+                    <div class="thesis-detail"><strong>Submitter:</strong> ${thesis.submitterEmail}</div>
+                    <div class="thesis-detail"><strong>Objective:</strong> ${thesis.objective}</div>
+                    <div class="thesis-detail"><strong>Abstract:</strong> ${thesis.abstract}</div>
+                    <div class="thesis-detail"><strong>Category:</strong> ${thesis.category}</div>
+                    <div class="thesis-detail"><strong>Keywords:</strong> ${thesis.keywords.join(', ')}</div>
+                    <div class="thesis-detail"><strong>Members:</strong> ${thesis.members.map(m => m.email).join(', ')}</div>
+                    <div class="thesis-detail"><strong>Adviser:</strong> ${thesis.adviserEmail}</div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Open edit modal
+        async function openEditModal(thesisId) {
+            try {
+                const response = await fetch(`${API_URL}/${thesisId}`);
+                const thesis = await response.json();
+                
+                document.getElementById('editThesisId').value = thesisId;
+                document.getElementById('editTitle').value = thesis.title;
+                document.getElementById('editObjective').value = thesis.objective;
+                document.getElementById('editAbstract').value = thesis.abstract;
+                document.getElementById('editCategory').value = thesis.category;
+                document.getElementById('editKeywords').value = thesis.keywords.join(', ');
+                
+                document.getElementById('editModal').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading thesis:', error);
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Update thesis
+        async function updateThesis(event) {
+            event.preventDefault();
+            
+            const thesisId = document.getElementById('editThesisId').value;
+            const thesisData = {
+                title: document.getElementById('editTitle').value,
+                objective: document.getElementById('editObjective').value,
+                abstract: document.getElementById('editAbstract').value,
+                category: document.getElementById('editCategory').value,
+                keywords: document.getElementById('editKeywords').value.split(',').map(k => k.trim())
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/${thesisId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(thesisData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update thesis');
+                }
+
+                closeModal();
+                loadPendingTheses();
+            } catch (error) {
+                console.error('Error updating thesis:', error);
+            }
+        }
+
+        // Delete thesis
+        async function deleteThesis(thesisId) {
+            if (!confirm('Are you sure you want to delete this thesis?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/${thesisId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to delete thesis');
+                }
+
+                loadPendingTheses();
+            } catch (error) {
+                console.error('Error deleting thesis:', error);
+            }
+        }
+
+        // Update thesis status
+        async function updateStatus(thesisId, status) {
+            try {
+                const response = await fetch(`${API_URL}/${thesisId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update thesis status');
+                }
+
+                loadPendingTheses();
+            } catch (error) {
+                console.error('Error updating thesis status:', error);
+            }
+        }
+
+        // Load theses when page loads
+        document.addEventListener('DOMContentLoaded', loadPendingTheses);
+    </script>
+</body>
+</html> 
